@@ -28,35 +28,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
+    <artifactId>project</artifactId>
     <groupId>org.apache.httpcomponents</groupId>
-    <artifactId>httpcomponents-core</artifactId>
-    <version>4.3-alpha1-SNAPSHOT</version>
+    <version>6</version>
+    <relativePath>../project/pom.xml</relativePath>
   </parent>
   <artifactId>httpcore-benchmark</artifactId>
   <name>HttpCore Benchmarks</name>
+  <version>4.2-SNAPSHOT</version>
   <description>
    HttpComponents HttpCore - Benchmarks
   </description>
   <url>http://hc.apache.org/httpcomponents-core</url>
   <packaging>jar</packaging>  
-
   <dependencies>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
-      <version>${project.version}</version>
+      <version>4.2.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore-nio</artifactId>
-      <version>${project.version}</version>
+      <version>4.2.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore-ab</artifactId>
-      <version>${project.version}</version>
+      <version>4.2.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
