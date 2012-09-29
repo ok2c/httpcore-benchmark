@@ -39,6 +39,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.MethodNotSupportedException;
 import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
@@ -75,8 +76,7 @@ class RandomDataHandler implements HttpRequestHandler  {
                     count = Integer.parseInt(s);
                 } catch (NumberFormatException ex) {
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-                    response.setEntity(new StringEntity("Invalid query format: " + s,
-                            "text/plain", "ASCII"));
+                    response.setEntity(new StringEntity("Invalid query format: " + s, ContentType.TEXT_PLAIN));
                     return;
                 }
             }

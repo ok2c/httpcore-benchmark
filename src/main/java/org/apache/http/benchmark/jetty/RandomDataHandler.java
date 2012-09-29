@@ -53,6 +53,7 @@ class RandomDataHandler extends AbstractHandler {
             rnd(request, response);
         } else {
             response.setStatus(HttpStatus.NOT_FOUND_404);
+            response.setContentType("text/plain");
             Writer writer = response.getWriter();
             writer.write("Target not found: " + target);
             writer.flush();
@@ -75,6 +76,7 @@ class RandomDataHandler extends AbstractHandler {
         }
 
         response.setStatus(200);
+        response.setContentType("text/plain");
         response.setContentLength(count);
 
         OutputStream outstream = response.getOutputStream();

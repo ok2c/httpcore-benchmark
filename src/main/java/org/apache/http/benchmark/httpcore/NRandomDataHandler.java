@@ -27,56 +27,47 @@
 package org.apache.http.benchmark.httpcore;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.MethodNotSupportedException;
-import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.nio.ContentEncoder;
 import org.apache.http.nio.IOControl;
-import org.apache.http.nio.entity.BufferingNHttpEntity;
-import org.apache.http.nio.entity.ConsumingNHttpEntity;
-import org.apache.http.nio.entity.ProducingNHttpEntity;
-import org.apache.http.nio.protocol.NHttpRequestHandler;
-import org.apache.http.nio.protocol.NHttpResponseTrigger;
-import org.apache.http.nio.util.HeapByteBufferAllocator;
+import org.apache.http.nio.protocol.BasicAsyncRequestConsumer;
+import org.apache.http.nio.protocol.HttpAsyncExchange;
+import org.apache.http.nio.protocol.HttpAsyncRequestConsumer;
+import org.apache.http.nio.protocol.HttpAsyncRequestHandler;
+import org.apache.http.nio.protocol.HttpAsyncResponseProducer;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 
-class NRandomDataHandler implements NHttpRequestHandler  {
+class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
 
     public NRandomDataHandler() {
         super();
     }
 
-    public ConsumingNHttpEntity entityRequest(
-            final HttpEntityEnclosingRequest request,
+    public HttpAsyncRequestConsumer<HttpRequest> processRequest(
+            final HttpRequest request,
             final HttpContext context) throws HttpException, IOException {
-        // Use buffering entity for simplicity
-        return new BufferingNHttpEntity(request.getEntity(), new HeapByteBufferAllocator());
+        return new BasicAsyncRequestConsumer();
     }
 
     public void handle(
             final HttpRequest request,
-            final HttpResponse response,
-            final NHttpResponseTrigger trigger,
+            final HttpAsyncExchange httpexchange,
             final HttpContext context) throws HttpException, IOException {
         String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
         if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
             throw new MethodNotSupportedException(method + " method not supported");
-        }
-        if (request instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
-            EntityUtils.consume(entity);
         }
         String target = request.getRequestLine().getUri();
 
@@ -90,90 +81,47 @@ class NRandomDataHandler implements NHttpRequestHandler  {
                 try {
                     count = Integer.parseInt(s);
                 } catch (NumberFormatException ex) {
+                    HttpResponse response = httpexchange.getResponse();
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-                    response.setEntity(new StringEntity("Invalid query format: " + s,
-                            "text/plain", "ASCII"));
+                    response.setEntity(new StringEntity("Invalid query format: " + s, ContentType.TEXT_PLAIN));
+                    httpexchange.submitResponse();
                     return;
                 }
             }
         }
-        response.setStatusCode(HttpStatus.SC_OK);
-        RandomEntity body = new RandomEntity(count);
-        response.setEntity(body);
-        trigger.submitResponse(response);
+        httpexchange.submitResponse(new RandomAsyncResponseProducer(count));
     }
 
+    static class RandomAsyncResponseProducer implements HttpAsyncResponseProducer {
 
-
-    public void handle(
-            final HttpRequest request,
-            final HttpResponse response,
-            final HttpContext context) throws HttpException, IOException {
-        String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
-        if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
-            throw new MethodNotSupportedException(method + " method not supported");
-        }
-        if (request instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
-            EntityUtils.consume(entity);
-        }
-        String target = request.getRequestLine().getUri();
-
-        int count = 100;
-
-        int idx = target.indexOf('?');
-        if (idx != -1) {
-            String s = target.substring(idx + 1);
-            if (s.startsWith("c=")) {
-                s = s.substring(2);
-                try {
-                    count = Integer.parseInt(s);
-                } catch (NumberFormatException ex) {
-                    response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-                    response.setEntity(new StringEntity("Invalid query format: " + s,
-                            "text/plain", "ASCII"));
-                    return;
-                }
-            }
-        }
-        response.setStatusCode(HttpStatus.SC_OK);
-        RandomEntity body = new RandomEntity(count);
-        response.setEntity(body);
-    }
-
-    static class RandomEntity extends AbstractHttpEntity implements ProducingNHttpEntity {
-
-        private final int count;
         private final ByteBuffer buf;
+        private final int count;
 
         private int remaining;
 
-        public RandomEntity(int count) {
+        public RandomAsyncResponseProducer(int count) {
             super();
             this.count = count;
-            this.remaining = count;
             this.buf = ByteBuffer.allocate(1024);
-            setContentType("text/plain");
         }
 
-        public InputStream getContent() throws IOException, IllegalStateException {
-            throw new IllegalStateException("Method not supported");
+        public void close() throws IOException {
         }
 
-        public long getContentLength() {
-            return this.count;
+        public void failed(final Exception ex) {
         }
 
-        public boolean isRepeatable() {
-            return true;
+        public HttpResponse generateResponse() {
+            HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+            BasicHttpEntity entity  = new BasicHttpEntity();
+            entity.setContentLength(this.count);
+            entity.setContentType(ContentType.TEXT_PLAIN.toString());
+            response.setEntity(entity);
+            this.remaining = this.count;
+            return response;
         }
 
-        public boolean isStreaming() {
-            return false;
-        }
-
-        public void writeTo(final OutputStream outstream) throws IOException {
-            throw new IllegalStateException("Method not supported");
+        public void responseCompleted(final HttpContext context) {
         }
 
         public void produceContent(
@@ -193,10 +141,6 @@ class NRandomDataHandler implements NHttpRequestHandler  {
                 encoder.complete();
             }
             this.buf.compact();
-        }
-
-        public void finish() throws IOException {
-            this.remaining = this.count;
         }
 
     }

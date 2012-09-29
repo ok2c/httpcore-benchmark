@@ -65,7 +65,7 @@ class HttpWorker extends Thread {
         this.workercallback.started(this);
         try {
             HttpContext context = new BasicHttpContext();
-            while (!Thread.interrupted() && !this.shutdown) {
+            while (!Thread.interrupted() && !this.shutdown && this.conn.isOpen()) {
                 this.httpservice.handleRequest(this.conn, context);
             }
         } catch (Exception ex) {

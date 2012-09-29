@@ -32,11 +32,10 @@ import java.net.InetSocketAddress;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.benchmark.HttpServer;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.impl.nio.DefaultServerIOEventDispatch;
+import org.apache.http.impl.nio.DefaultHttpServerIODispatch;
 import org.apache.http.impl.nio.reactor.DefaultListeningIOReactor;
-import org.apache.http.nio.protocol.AsyncNHttpServiceHandler;
-import org.apache.http.nio.protocol.NHttpRequestHandlerRegistry;
+import org.apache.http.nio.protocol.HttpAsyncRequestHandlerRegistry;
+import org.apache.http.nio.protocol.HttpAsyncService;
 import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.ListeningIOReactor;
 import org.apache.http.params.CoreConnectionPNames;
@@ -76,18 +75,15 @@ public class HttpCoreNIOServer implements HttpServer {
                 new ResponseConnControl()
         });
 
-        AsyncNHttpServiceHandler handler = new AsyncNHttpServiceHandler(
-                httpproc,
-                new DefaultHttpResponseFactory(),
-                new DefaultConnectionReuseStrategy(),
-                params);
-
-        NHttpRequestHandlerRegistry reqistry = new NHttpRequestHandlerRegistry();
+        HttpAsyncRequestHandlerRegistry reqistry = new HttpAsyncRequestHandlerRegistry();
         reqistry.register("/rnd", new NRandomDataHandler());
-        handler.setHandlerResolver(reqistry);
 
-        ListeningIOReactor ioreactor = new DefaultListeningIOReactor(2, params);
-        IOEventDispatch ioEventDispatch = new DefaultServerIOEventDispatch(handler, params);
+        HttpAsyncService handler = new HttpAsyncService(
+                httpproc, new DefaultConnectionReuseStrategy(), reqistry, params);
+
+        ListeningIOReactor ioreactor = new DefaultListeningIOReactor();
+        IOEventDispatch ioEventDispatch = new DefaultHttpServerIODispatch(handler, params);
+
         this.listener = new NHttpListener(ioreactor, ioEventDispatch);
     }
 

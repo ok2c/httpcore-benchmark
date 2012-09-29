@@ -77,7 +77,9 @@ class HttpListener extends Thread {
             } catch (InterruptedIOException ex) {
                 terminate();
             } catch (IOException ex) {
-                this.exception = ex;
+                if (!this.shutdown) {
+                    this.exception = ex;
+                }
                 terminate();
             }
         }
