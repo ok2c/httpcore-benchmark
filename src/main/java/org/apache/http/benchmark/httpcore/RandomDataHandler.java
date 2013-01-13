@@ -88,7 +88,7 @@ class RandomDataHandler implements HttpRequestHandler  {
 
     static class RandomEntity extends AbstractHttpEntity {
 
-        private int count;
+        private final int count;
         private final byte[] buf;
 
         public RandomEntity(int count) {
