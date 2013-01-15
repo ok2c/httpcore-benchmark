@@ -36,7 +36,7 @@ public class JettyNIOServer implements HttpServer {
 
     private final Server server;
 
-    public JettyNIOServer(int port) {
+    public JettyNIOServer(final int port) {
         super();
         if (port <= 0) {
             throw new IllegalArgumentException("Server port may not be negative or null");
@@ -81,7 +81,7 @@ public class JettyNIOServer implements HttpServer {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (args.length != 1) {
             System.out.println("Usage: <port>");
             System.exit(1);

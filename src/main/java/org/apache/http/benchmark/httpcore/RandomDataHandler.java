@@ -91,7 +91,7 @@ class RandomDataHandler implements HttpRequestHandler  {
         private final int count;
         private final byte[] buf;
 
-        public RandomEntity(int count) {
+        public RandomEntity(final int count) {
             super();
             this.count = count;
             this.buf = new byte[1024];

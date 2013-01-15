@@ -45,7 +45,7 @@ public class Benchmark {
 
     private static final int PORT = 8989;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         Config config = new Config();
         if (args.length > 0) {

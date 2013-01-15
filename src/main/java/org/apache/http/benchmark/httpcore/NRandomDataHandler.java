@@ -99,7 +99,7 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
 
         private int remaining;
 
-        public RandomAsyncResponseProducer(int count) {
+        public RandomAsyncResponseProducer(final int count) {
             super();
             this.count = count;
             this.buf = ByteBuffer.allocate(1024);

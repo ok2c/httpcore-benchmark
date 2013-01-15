@@ -73,7 +73,7 @@ public class NHttpListener extends Thread {
         return this.exception;
     }
 
-    public void awaitTermination(long millis) throws InterruptedException {
+    public void awaitTermination(final long millis) throws InterruptedException {
         this.join(millis);
     }
 

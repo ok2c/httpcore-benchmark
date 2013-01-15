@@ -99,7 +99,7 @@ class HttpListener extends Thread {
         }
     }
 
-    public void awaitTermination(long millis) throws InterruptedException {
+    public void awaitTermination(final long millis) throws InterruptedException {
         this.join(millis);
     }
 

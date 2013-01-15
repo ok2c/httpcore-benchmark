@@ -55,7 +55,7 @@ public class HttpCoreNIOServer implements HttpServer {
     private final int port;
     private final NHttpListener listener;
 
-    public HttpCoreNIOServer(int port) throws IOException {
+    public HttpCoreNIOServer(final int port) throws IOException {
         if (port <= 0) {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
@@ -114,7 +114,7 @@ public class HttpCoreNIOServer implements HttpServer {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (args.length != 1) {
             System.out.println("Usage: <port>");
             System.exit(1);
