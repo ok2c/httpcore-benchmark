@@ -65,23 +65,23 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
             final HttpRequest request,
             final HttpAsyncExchange httpexchange,
             final HttpContext context) throws HttpException, IOException {
-        String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
+        final String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
         if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
             throw new MethodNotSupportedException(method + " method not supported");
         }
-        String target = request.getRequestLine().getUri();
+        final String target = request.getRequestLine().getUri();
 
         int count = 100;
 
-        int idx = target.indexOf('?');
+        final int idx = target.indexOf('?');
         if (idx != -1) {
             String s = target.substring(idx + 1);
             if (s.startsWith("c=")) {
                 s = s.substring(2);
                 try {
                     count = Integer.parseInt(s);
-                } catch (NumberFormatException ex) {
-                    HttpResponse response = httpexchange.getResponse();
+                } catch (final NumberFormatException ex) {
+                    final HttpResponse response = httpexchange.getResponse();
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                     response.setEntity(new StringEntity("Invalid query format: " + s, ContentType.TEXT_PLAIN));
                     httpexchange.submitResponse();
@@ -112,8 +112,8 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
         }
 
         public HttpResponse generateResponse() {
-            HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
-            BasicHttpEntity entity  = new BasicHttpEntity();
+            final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+            final BasicHttpEntity entity  = new BasicHttpEntity();
             entity.setContentLength(this.count);
             entity.setContentType(ContentType.TEXT_PLAIN.toString());
             response.setEntity(entity);
@@ -126,16 +126,16 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
 
         public void produceContent(
                 final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
-            int r = Math.abs(this.buf.hashCode());
-            int chunk = Math.min(this.buf.remaining(), this.remaining);
+            final int r = Math.abs(this.buf.hashCode());
+            final int chunk = Math.min(this.buf.remaining(), this.remaining);
             if (chunk > 0) {
                 for (int i = 0; i < chunk; i++) {
-                    byte b = (byte) ((r + i) % 96 + 32);
+                    final byte b = (byte) ((r + i) % 96 + 32);
                     this.buf.put(b);
                 }
             }
             this.buf.flip();
-            int bytesWritten = encoder.write(this.buf);
+            final int bytesWritten = encoder.write(this.buf);
             this.remaining -= bytesWritten;
             if (this.remaining == 0 && this.buf.remaining() == 0) {
                 encoder.complete();

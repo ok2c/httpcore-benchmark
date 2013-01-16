@@ -61,7 +61,7 @@ public class HttpCoreServer implements HttpServer {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
 
-        HttpParams params = new SyncBasicHttpParams();
+        final HttpParams params = new SyncBasicHttpParams();
         params
             .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 10000)
             .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 12 * 1024)
@@ -69,17 +69,17 @@ public class HttpCoreServer implements HttpServer {
             .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
             .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "HttpCore-Test/1.1");
 
-        HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
+        final HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
                 new ResponseDate(),
                 new ResponseServer(),
                 new ResponseContent(),
                 new ResponseConnControl()
         });
 
-        HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
+        final HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
         reqistry.register("/rnd", new RandomDataHandler());
 
-        HttpService httpservice = new HttpService(
+        final HttpService httpservice = new HttpService(
                 httpproc,
                 new DefaultConnectionReuseStrategy(),
                 new DefaultHttpResponseFactory(),
@@ -98,7 +98,7 @@ public class HttpCoreServer implements HttpServer {
     }
 
     public String getVersion() {
-        VersionInfo vinfo = VersionInfo.loadVersionInfo("org.apache.http",
+        final VersionInfo vinfo = VersionInfo.loadVersionInfo("org.apache.http",
                 Thread.currentThread().getContextClassLoader());
         return vinfo.getRelease();
     }
@@ -111,18 +111,18 @@ public class HttpCoreServer implements HttpServer {
         this.listener.terminate();
         try {
             this.listener.awaitTermination(1000);
-        } catch (InterruptedException ex) {
+        } catch (final InterruptedException ex) {
         }
         Exception ex = this.listener.getException();
         if (ex != null) {
             System.out.println("Error: " + ex.getMessage());
         }
         while (!this.workers.isEmpty()) {
-            HttpWorker worker = this.workers.remove();
+            final HttpWorker worker = this.workers.remove();
             worker.terminate();
             try {
                 worker.awaitTermination(1000);
-            } catch (InterruptedException iex) {
+            } catch (final InterruptedException iex) {
             }
             ex = worker.getException();
             if (ex != null) {
@@ -136,7 +136,7 @@ public class HttpCoreServer implements HttpServer {
             System.out.println("Usage: <port>");
             System.exit(1);
         }
-        int port = Integer.parseInt(args[0]);
+        final int port = Integer.parseInt(args[0]);
         final HttpCoreServer server = new HttpCoreServer(port);
         System.out.println("Listening on port: " + port);
         server.start();

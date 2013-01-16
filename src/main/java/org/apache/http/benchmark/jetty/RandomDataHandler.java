@@ -54,7 +54,7 @@ class RandomDataHandler extends AbstractHandler {
         } else {
             response.setStatus(HttpStatus.NOT_FOUND_404);
             response.setContentType("text/plain");
-            Writer writer = response.getWriter();
+            final Writer writer = response.getWriter();
             writer.write("Target not found: " + target);
             writer.flush();
         }
@@ -64,12 +64,12 @@ class RandomDataHandler extends AbstractHandler {
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         int count = 100;
-        String s = request.getParameter("c");
+        final String s = request.getParameter("c");
         try {
             count = Integer.parseInt(s);
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             response.setStatus(500);
-            Writer writer = response.getWriter();
+            final Writer writer = response.getWriter();
             writer.write("Invalid query format: " + request.getQueryString());
             writer.flush();
             return;
@@ -79,12 +79,12 @@ class RandomDataHandler extends AbstractHandler {
         response.setContentType("text/plain");
         response.setContentLength(count);
 
-        OutputStream outstream = response.getOutputStream();
-        byte[] tmp = new byte[1024];
-        int r = Math.abs(tmp.hashCode());
+        final OutputStream outstream = response.getOutputStream();
+        final byte[] tmp = new byte[1024];
+        final int r = Math.abs(tmp.hashCode());
         int remaining = count;
         while (remaining > 0) {
-            int chunk = Math.min(tmp.length, remaining);
+            final int chunk = Math.min(tmp.length, remaining);
             for (int i = 0; i < chunk; i++) {
                 tmp[i] = (byte) ((r + i) % 96 + 32);
             }

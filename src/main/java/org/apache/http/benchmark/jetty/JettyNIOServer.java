@@ -42,13 +42,13 @@ public class JettyNIOServer implements HttpServer {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
 
-        SelectChannelConnector connector = new SelectChannelConnector();
+        final SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(port);
         connector.setRequestBufferSize(12 * 1024);
         connector.setResponseBufferSize(12 * 1024);
         connector.setAcceptors(2);
 
-        QueuedThreadPool threadpool = new QueuedThreadPool();
+        final QueuedThreadPool threadpool = new QueuedThreadPool();
         threadpool.setMinThreads(25);
         threadpool.setMaxThreads(200);
 
@@ -73,11 +73,11 @@ public class JettyNIOServer implements HttpServer {
     public void shutdown() {
         try {
             this.server.stop();
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
         }
         try {
             this.server.join();
-        } catch (InterruptedException ex) {
+        } catch (final InterruptedException ex) {
         }
     }
 
@@ -86,7 +86,7 @@ public class JettyNIOServer implements HttpServer {
             System.out.println("Usage: <port>");
             System.exit(1);
         }
-        int port = Integer.parseInt(args[0]);
+        final int port = Integer.parseInt(args[0]);
         final JettyNIOServer server = new JettyNIOServer(port);
         System.out.println("Listening on port: " + port);
         server.start();

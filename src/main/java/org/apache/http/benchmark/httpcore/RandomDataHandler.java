@@ -55,26 +55,26 @@ class RandomDataHandler implements HttpRequestHandler  {
             final HttpRequest request,
             final HttpResponse response,
             final HttpContext context) throws HttpException, IOException {
-        String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
+        final String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
         if (!method.equals("GET") && !method.equals("HEAD") && !method.equals("POST")) {
             throw new MethodNotSupportedException(method + " method not supported");
         }
         if (request instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
+            final HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
             EntityUtils.consume(entity);
         }
-        String target = request.getRequestLine().getUri();
+        final String target = request.getRequestLine().getUri();
 
         int count = 100;
 
-        int idx = target.indexOf('?');
+        final int idx = target.indexOf('?');
         if (idx != -1) {
             String s = target.substring(idx + 1);
             if (s.startsWith("c=")) {
                 s = s.substring(2);
                 try {
                     count = Integer.parseInt(s);
-                } catch (NumberFormatException ex) {
+                } catch (final NumberFormatException ex) {
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                     response.setEntity(new StringEntity("Invalid query format: " + s, ContentType.TEXT_PLAIN));
                     return;
@@ -82,7 +82,7 @@ class RandomDataHandler implements HttpRequestHandler  {
             }
         }
         response.setStatusCode(HttpStatus.SC_OK);
-        RandomEntity body = new RandomEntity(count);
+        final RandomEntity body = new RandomEntity(count);
         response.setEntity(body);
     }
 
@@ -115,10 +115,10 @@ class RandomDataHandler implements HttpRequestHandler  {
         }
 
         public void writeTo(final OutputStream outstream) throws IOException {
-            int r = Math.abs(this.buf.hashCode());
+            final int r = Math.abs(this.buf.hashCode());
             int remaining = this.count;
             while (remaining > 0) {
-                int chunk = Math.min(this.buf.length, remaining);
+                final int chunk = Math.min(this.buf.length, remaining);
                 for (int i = 0; i < chunk; i++) {
                     this.buf[i] = (byte) ((r + i) % 96 + 32);
                 }

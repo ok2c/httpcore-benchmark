@@ -47,13 +47,13 @@ public class Benchmark {
 
     public static void main(final String[] args) throws Exception {
 
-        Config config = new Config();
+        final Config config = new Config();
         if (args.length > 0) {
-            Options options = CommandLineUtils.getOptions();
-            CommandLineParser parser = new PosixParser();
-            CommandLine cmd = parser.parse(options, args);
+            final Options options = CommandLineUtils.getOptions();
+            final CommandLineParser parser = new PosixParser();
+            final CommandLine cmd = parser.parse(options, args);
             if (cmd.hasOption('h')) {
-                HelpFormatter formatter = new HelpFormatter();
+                final HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("Benchmark [options]", options);
                 System.exit(1);
             }
@@ -64,10 +64,10 @@ public class Benchmark {
             config.setThreads(25);
         }
 
-        URL target = new URL("http", "localhost", PORT, "/rnd?c=2048");
+        final URL target = new URL("http", "localhost", PORT, "/rnd?c=2048");
         config.setUrl(target);
 
-        Benchmark benchmark = new Benchmark();
+        final Benchmark benchmark = new Benchmark();
         benchmark.run(new JettyServer(PORT), config);
         benchmark.run(new HttpCoreServer(PORT), config);
         benchmark.run(new JettyNIOServer(PORT), config);
@@ -85,7 +85,7 @@ public class Benchmark {
             System.out.println(server.getName() + "; version: " + server.getVersion());
             System.out.println("---------------------------------------------------------------");
 
-            HttpBenchmark ab = new HttpBenchmark(config);
+            final HttpBenchmark ab = new HttpBenchmark(config);
             ab.execute();
             System.out.println("---------------------------------------------------------------");
         } finally {

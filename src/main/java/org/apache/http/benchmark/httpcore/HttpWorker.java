@@ -64,11 +64,11 @@ class HttpWorker extends Thread {
     public void run() {
         this.workercallback.started(this);
         try {
-            HttpContext context = new BasicHttpContext();
+            final HttpContext context = new BasicHttpContext();
             while (!Thread.interrupted() && !this.shutdown && this.conn.isOpen()) {
                 this.httpservice.handleRequest(this.conn, context);
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             this.exception = ex;
         } finally {
             terminate();
@@ -83,7 +83,7 @@ class HttpWorker extends Thread {
         this.shutdown = true;
         try {
             this.conn.shutdown();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             if (this.exception != null) {
                 this.exception = ex;
             }

@@ -52,20 +52,20 @@ public class NHttpListener extends Thread {
     public void run() {
         try {
             this.ioreactor.execute(this.ioEventDispatch);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             this.exception = ex;
         }
     }
 
     public void listen(final InetSocketAddress address) throws InterruptedException {
-        ListenerEndpoint endpoint = this.ioreactor.listen(address);
+        final ListenerEndpoint endpoint = this.ioreactor.listen(address);
         endpoint.waitFor();
     }
 
     public void terminate() {
         try {
             this.ioreactor.shutdown();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
         }
     }
 

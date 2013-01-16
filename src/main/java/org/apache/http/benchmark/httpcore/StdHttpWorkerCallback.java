@@ -48,7 +48,7 @@ class StdHttpWorkerCallback implements HttpWorkerCallback {
 
     public void shutdown(final HttpWorker worker) {
         this.queue.remove(worker);
-        Exception ex = worker.getException();
+        final Exception ex = worker.getException();
         if (ex != null) {
             if (ex instanceof HttpException) {
                 System.err.println("HTTP protocol error: " + ex.getMessage());

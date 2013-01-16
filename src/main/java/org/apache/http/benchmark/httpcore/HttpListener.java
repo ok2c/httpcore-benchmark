@@ -67,16 +67,16 @@ class HttpListener extends Thread {
         while (!Thread.interrupted() && !this.shutdown) {
             try {
                 // Set up HTTP connection
-                Socket socket = this.serversocket.accept();
-                DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
+                final Socket socket = this.serversocket.accept();
+                final DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
                 conn.bind(socket, this.httpservice.getParams());
 
                 // Start worker thread
-                HttpWorker t = new HttpWorker(this.httpservice, conn, this.workercallback);
+                final HttpWorker t = new HttpWorker(this.httpservice, conn, this.workercallback);
                 t.start();
-            } catch (InterruptedIOException ex) {
+            } catch (final InterruptedIOException ex) {
                 terminate();
-            } catch (IOException ex) {
+            } catch (final IOException ex) {
                 if (!this.shutdown) {
                     this.exception = ex;
                 }
@@ -92,7 +92,7 @@ class HttpListener extends Thread {
         this.shutdown = true;
         try {
             this.serversocket.close();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             if (this.exception != null) {
                 this.exception = ex;
             }

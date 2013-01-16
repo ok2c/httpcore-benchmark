@@ -61,28 +61,28 @@ public class HttpCoreNIOServer implements HttpServer {
         }
         this.port = port;
 
-        HttpParams params = new SyncBasicHttpParams();
+        final HttpParams params = new SyncBasicHttpParams();
         params
             .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 10000)
             .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 12 * 1024)
             .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
             .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "HttpCore-NIO-Test/1.1");
 
-        HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
+        final HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
                 new ResponseDate(),
                 new ResponseServer(),
                 new ResponseContent(),
                 new ResponseConnControl()
         });
 
-        HttpAsyncRequestHandlerRegistry reqistry = new HttpAsyncRequestHandlerRegistry();
+        final HttpAsyncRequestHandlerRegistry reqistry = new HttpAsyncRequestHandlerRegistry();
         reqistry.register("/rnd", new NRandomDataHandler());
 
-        HttpAsyncService handler = new HttpAsyncService(
+        final HttpAsyncService handler = new HttpAsyncService(
                 httpproc, new DefaultConnectionReuseStrategy(), reqistry, params);
 
-        ListeningIOReactor ioreactor = new DefaultListeningIOReactor();
-        IOEventDispatch ioEventDispatch = new DefaultHttpServerIODispatch(handler, params);
+        final ListeningIOReactor ioreactor = new DefaultListeningIOReactor();
+        final IOEventDispatch ioEventDispatch = new DefaultHttpServerIODispatch(handler, params);
 
         this.listener = new NHttpListener(ioreactor, ioEventDispatch);
     }
@@ -92,7 +92,7 @@ public class HttpCoreNIOServer implements HttpServer {
     }
 
     public String getVersion() {
-        VersionInfo vinfo = VersionInfo.loadVersionInfo("org.apache.http",
+        final VersionInfo vinfo = VersionInfo.loadVersionInfo("org.apache.http",
                 Thread.currentThread().getContextClassLoader());
         return vinfo.getRelease();
     }
@@ -106,9 +106,9 @@ public class HttpCoreNIOServer implements HttpServer {
         this.listener.terminate();
         try {
             this.listener.awaitTermination(1000);
-        } catch (InterruptedException ex) {
+        } catch (final InterruptedException ex) {
         }
-        Exception ex = this.listener.getException();
+        final Exception ex = this.listener.getException();
         if (ex != null) {
             System.out.println("Error: " + ex.getMessage());
         }
@@ -119,7 +119,7 @@ public class HttpCoreNIOServer implements HttpServer {
             System.out.println("Usage: <port>");
             System.exit(1);
         }
-        int port = Integer.parseInt(args[0]);
+        final int port = Integer.parseInt(args[0]);
         final HttpCoreNIOServer server = new HttpCoreNIOServer(port);
         System.out.println("Listening on port: " + port);
         server.start();
