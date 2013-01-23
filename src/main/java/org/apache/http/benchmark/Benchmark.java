@@ -37,9 +37,6 @@ import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
 import org.apache.http.benchmark.httpcore.HttpCoreServer;
 import org.apache.http.benchmark.jetty.JettyNIOServer;
 import org.apache.http.benchmark.jetty.JettyServer;
-import org.apache.http.benchmark.CommandLineUtils;
-import org.apache.http.benchmark.Config;
-import org.apache.http.benchmark.HttpBenchmark;
 
 public class Benchmark {
 
