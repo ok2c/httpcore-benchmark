@@ -87,8 +87,11 @@ public class HttpCoreServer implements HttpServer {
                 params);
 
         this.workers = new ConcurrentLinkedQueue<HttpWorker>();
+        ServerSocket serverSocket = new ServerSocket(port);
+        serverSocket.setReuseAddress(true);
+        serverSocket.setReceiveBufferSize(8 * 1024);
         this.listener = new HttpListener(
-                new ServerSocket(port),
+                serverSocket,
                 httpservice,
                 new StdHttpWorkerCallback(this.workers));
     }

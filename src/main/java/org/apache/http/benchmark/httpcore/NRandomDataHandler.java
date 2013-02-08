@@ -97,12 +97,16 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
         private final ByteBuffer buf;
         private final int count;
 
-        private int remaining;
-
         public RandomAsyncResponseProducer(final int count) {
             super();
             this.count = count;
-            this.buf = ByteBuffer.allocate(1024);
+            this.buf = ByteBuffer.allocate(count);
+            final int r = Math.abs(this.buf.hashCode());
+            for (int i = 0; i < count; i++) {
+                final byte b = (byte) ((r + i) % 96 + 32);
+                this.buf.put(b);
+            }
+            this.buf.flip();
         }
 
         public void close() throws IOException {
@@ -117,7 +121,6 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
             entity.setContentLength(this.count);
             entity.setContentType(ContentType.TEXT_PLAIN.toString());
             response.setEntity(entity);
-            this.remaining = this.count;
             return response;
         }
 
@@ -126,21 +129,15 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
 
         public void produceContent(
                 final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
-            final int r = Math.abs(this.buf.hashCode());
-            final int chunk = Math.min(this.buf.remaining(), this.remaining);
-            if (chunk > 0) {
-                for (int i = 0; i < chunk; i++) {
-                    final byte b = (byte) ((r + i) % 96 + 32);
-                    this.buf.put(b);
+            while (this.buf.hasRemaining()) {
+                final int bytesWritten = encoder.write(this.buf);
+                if (this.buf.remaining() == 0) {
+                    encoder.complete();
+                }
+                if (bytesWritten <= 0) {
+                    break;
                 }
             }
-            this.buf.flip();
-            final int bytesWritten = encoder.write(this.buf);
-            this.remaining -= bytesWritten;
-            if (this.remaining == 0 && this.buf.remaining() == 0) {
-                encoder.complete();
-            }
-            this.buf.compact();
         }
 
     }

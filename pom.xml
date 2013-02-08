@@ -84,6 +84,12 @@
       <version>1.5.10</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty</artifactId>
+      <version>3.6.2.Final</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <properties>

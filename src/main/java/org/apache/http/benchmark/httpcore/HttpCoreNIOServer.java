@@ -38,10 +38,10 @@ import org.apache.http.nio.protocol.HttpAsyncRequestHandlerRegistry;
 import org.apache.http.nio.protocol.HttpAsyncService;
 import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.ListeningIOReactor;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseConnControl;
@@ -61,7 +61,7 @@ public class HttpCoreNIOServer implements HttpServer {
         }
         this.port = port;
 
-        final HttpParams params = new SyncBasicHttpParams();
+        final HttpParams params = new BasicHttpParams();
         params
             .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 10000)
             .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 12 * 1024)

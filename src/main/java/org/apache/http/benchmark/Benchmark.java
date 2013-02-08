@@ -37,6 +37,7 @@ import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
 import org.apache.http.benchmark.httpcore.HttpCoreServer;
 import org.apache.http.benchmark.jetty.JettyNIOServer;
 import org.apache.http.benchmark.jetty.JettyServer;
+import org.apache.http.benchmark.netty.NettyNIOServer;
 
 public class Benchmark {
 
@@ -68,6 +69,7 @@ public class Benchmark {
         benchmark.run(new JettyServer(PORT), config);
         benchmark.run(new HttpCoreServer(PORT), config);
         benchmark.run(new JettyNIOServer(PORT), config);
+        benchmark.run(new NettyNIOServer(PORT), config);
         benchmark.run(new HttpCoreNIOServer(PORT), config);
     }
 
