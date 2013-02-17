@@ -33,21 +33,18 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.benchmark.BenchConsts;
 import org.apache.http.benchmark.HttpServer;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpRequestHandlerRegistry;
 import org.apache.http.protocol.HttpService;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseConnControl;
 import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
+import org.apache.http.protocol.UriHttpRequestHandlerMapper;
 import org.apache.http.util.VersionInfo;
 
 public class HttpCoreServer implements HttpServer {
@@ -61,35 +58,26 @@ public class HttpCoreServer implements HttpServer {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
 
-        final HttpParams params = new SyncBasicHttpParams();
-        params
-            .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 10000)
-            .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 12 * 1024)
-            .setIntParameter(CoreConnectionPNames.MIN_CHUNK_LIMIT, 1024)
-            .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
-            .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "HttpCore-Test/1.1");
-
         final HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
                 new ResponseDate(),
-                new ResponseServer(),
+                new ResponseServer("HttpCore-Test/1.1"),
                 new ResponseContent(),
                 new ResponseConnControl()
         });
 
-        final HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
+        final UriHttpRequestHandlerMapper reqistry = new UriHttpRequestHandlerMapper();
         reqistry.register("/rnd", new RandomDataHandler());
 
         final HttpService httpservice = new HttpService(
                 httpproc,
-                new DefaultConnectionReuseStrategy(),
-                new DefaultHttpResponseFactory(),
-                reqistry,
-                params);
+                DefaultConnectionReuseStrategy.INSTANCE,
+                DefaultHttpResponseFactory.INSTANCE,
+                reqistry);
 
         this.workers = new ConcurrentLinkedQueue<HttpWorker>();
-        ServerSocket serverSocket = new ServerSocket(port);
+        final ServerSocket serverSocket = new ServerSocket(port);
         serverSocket.setReuseAddress(true);
-        serverSocket.setReceiveBufferSize(8 * 1024);
+        serverSocket.setReceiveBufferSize(BenchConsts.BUF_SIZE);
         this.listener = new HttpListener(
                 serverSocket,
                 httpservice,

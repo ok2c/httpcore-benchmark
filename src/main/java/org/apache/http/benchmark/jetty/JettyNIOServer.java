@@ -27,6 +27,7 @@
 
 package org.apache.http.benchmark.jetty;
 
+import org.apache.http.benchmark.BenchConsts;
 import org.apache.http.benchmark.HttpServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -44,9 +45,9 @@ public class JettyNIOServer implements HttpServer {
 
         final SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(port);
-        connector.setRequestBufferSize(12 * 1024);
-        connector.setResponseBufferSize(12 * 1024);
-        connector.setAcceptors(2);
+        connector.setRequestBufferSize(BenchConsts.BUF_SIZE);
+        connector.setResponseBufferSize(BenchConsts.BUF_SIZE);
+        connector.setReuseAddress(true);
 
         final QueuedThreadPool threadpool = new QueuedThreadPool();
         threadpool.setMinThreads(25);

@@ -30,6 +30,7 @@ package org.apache.http.benchmark.netty;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
+import org.apache.http.benchmark.BenchConsts;
 import org.apache.http.benchmark.HttpServer;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
@@ -50,21 +51,25 @@ public class NettyNIOServer implements HttpServer {
             Executors.newCachedThreadPool(),
             Executors.newCachedThreadPool()));
         this.serverBootstrap.setPipelineFactory(new HttpServerPipelineFactory());
-        this.serverBootstrap.setOption("child.tcpNoDelay", Boolean.TRUE);
+        this.serverBootstrap.setOption("child.tcpNoDelay", Boolean.valueOf(BenchConsts.TCP_NO_DELAY));
     }
 
+    @Override
     public String getName() {
         return "Netty";
     }
 
+    @Override
     public String getVersion() {
         return "3.6.2";
     }
 
+    @Override
     public void start() throws Exception {
         serverBootstrap.bind(new InetSocketAddress(port));
     }
 
+    @Override
     public void shutdown() {
         serverBootstrap.releaseExternalResources();
     }
@@ -74,7 +79,7 @@ public class NettyNIOServer implements HttpServer {
             System.out.println("Usage: <port>");
             System.exit(1);
         }
-        int port = Integer.parseInt(args[0]);
+        final int port = Integer.parseInt(args[0]);
         final NettyNIOServer server = new NettyNIOServer(port);
         System.out.println("Listening on port: " + port);
         server.start();

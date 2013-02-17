@@ -28,11 +28,11 @@
 package org.apache.http.benchmark.httpcore;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.apache.http.impl.DefaultHttpServerConnection;
+import org.apache.http.benchmark.BenchConsts;
+import org.apache.http.impl.DefaultBHttpServerConnection;
 import org.apache.http.protocol.HttpService;
 
 class HttpListener extends Thread {
@@ -68,17 +68,17 @@ class HttpListener extends Thread {
             try {
                 // Set up HTTP connection
                 final Socket socket = this.serversocket.accept();
-                socket.setReceiveBufferSize(8 * 1024);
-                socket.setSendBufferSize(8 * 1024);
+                socket.setReceiveBufferSize(BenchConsts.BUF_SIZE);
+                socket.setSendBufferSize(BenchConsts.BUF_SIZE);
+                socket.setTcpNoDelay(BenchConsts.TCP_NO_DELAY);
 
-                final DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
-                conn.bind(socket, this.httpservice.getParams());
+                final DefaultBHttpServerConnection conn = new DefaultBHttpServerConnection(
+                    BenchConsts.BUF_SIZE);
+                conn.bind(socket);
 
                 // Start worker thread
                 final HttpWorker t = new HttpWorker(this.httpservice, conn, this.workercallback);
                 t.start();
-            } catch (final InterruptedIOException ex) {
-                terminate();
             } catch (final IOException ex) {
                 if (!this.shutdown) {
                     this.exception = ex;

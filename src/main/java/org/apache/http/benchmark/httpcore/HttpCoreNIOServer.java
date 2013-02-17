@@ -30,18 +30,18 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.benchmark.BenchConsts;
 import org.apache.http.benchmark.HttpServer;
+import org.apache.http.config.ConnectionConfig;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.nio.DefaultHttpServerIODispatch;
 import org.apache.http.impl.nio.reactor.DefaultListeningIOReactor;
-import org.apache.http.nio.protocol.HttpAsyncRequestHandlerRegistry;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.nio.protocol.HttpAsyncService;
+import org.apache.http.nio.protocol.UriHttpAsyncRequestHandlerMapper;
 import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.ListeningIOReactor;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseConnControl;
@@ -61,28 +61,32 @@ public class HttpCoreNIOServer implements HttpServer {
         }
         this.port = port;
 
-        final HttpParams params = new BasicHttpParams();
-        params
-            .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 10000)
-            .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 12 * 1024)
-            .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
-            .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "HttpCore-NIO-Test/1.1");
-
         final HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
                 new ResponseDate(),
-                new ResponseServer(),
+                new ResponseServer("HttpCore-NIO-Test/1.1"),
                 new ResponseContent(),
                 new ResponseConnControl()
         });
 
-        final HttpAsyncRequestHandlerRegistry reqistry = new HttpAsyncRequestHandlerRegistry();
-        reqistry.register("/rnd", new NRandomDataHandler());
+        final UriHttpAsyncRequestHandlerMapper registry = new UriHttpAsyncRequestHandlerMapper();
+        registry.register("/rnd", new NRandomDataHandler());
 
         final HttpAsyncService handler = new HttpAsyncService(
-                httpproc, new DefaultConnectionReuseStrategy(), reqistry, params);
+                httpproc,
+                DefaultConnectionReuseStrategy.INSTANCE,
+                DefaultHttpResponseFactory.INSTANCE,
+                registry,
+                null);
 
-        final ListeningIOReactor ioreactor = new DefaultListeningIOReactor();
-        final IOEventDispatch ioEventDispatch = new DefaultHttpServerIODispatch(handler, params);
+        final IOReactorConfig reactorConfig = IOReactorConfig.custom()
+            .setSoReuseAddress(true)
+            .setTcpNoDelay(BenchConsts.TCP_NO_DELAY)
+            .build();
+        final ListeningIOReactor ioreactor = new DefaultListeningIOReactor(reactorConfig);
+        final ConnectionConfig connectionConfig = ConnectionConfig.custom()
+            .build();
+        final IOEventDispatch ioEventDispatch = new DefaultHttpServerIODispatch(handler,
+            connectionConfig);
 
         this.listener = new NHttpListener(ioreactor, ioEventDispatch);
     }

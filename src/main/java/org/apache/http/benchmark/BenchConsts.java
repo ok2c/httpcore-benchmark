@@ -25,23 +25,11 @@
  *
  */
 
-package org.apache.http.benchmark.netty;
+package org.apache.http.benchmark;
 
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
-import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
+public final class BenchConsts {
 
-public class HttpServerPipelineFactory implements ChannelPipelineFactory {
-
-    public ChannelPipeline getPipeline() throws Exception {
-        final ChannelPipeline pipeline = Channels.pipeline();
-        pipeline.addLast("decoder", new HttpRequestDecoder());
-        pipeline.addLast("encoder", new HttpResponseEncoder());
-        pipeline.addLast("handler", new RandomDataHandler());
-        return pipeline;
-    }
-
+    public static final int BUF_SIZE             = 8 * 1024;
+    public static final boolean TCP_NO_DELAY     = true;
 
 }
