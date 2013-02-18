@@ -55,12 +55,14 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
         super();
     }
 
+    @Override
     public HttpAsyncRequestConsumer<HttpRequest> processRequest(
             final HttpRequest request,
             final HttpContext context) throws HttpException, IOException {
         return new BasicAsyncRequestConsumer();
     }
 
+    @Override
     public void handle(
             final HttpRequest request,
             final HttpAsyncExchange httpexchange,
@@ -100,21 +102,24 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
         public RandomAsyncResponseProducer(final int count) {
             super();
             this.count = count;
-            this.buf = ByteBuffer.allocate(count);
-            final int r = Math.abs(this.buf.hashCode());
+
+            final byte[] b = new byte[count];
+            final int r = Math.abs(b.hashCode());
             for (int i = 0; i < count; i++) {
-                final byte b = (byte) ((r + i) % 96 + 32);
-                this.buf.put(b);
+                b[i] = (byte) ((r + i) % 96 + 32);
             }
-            this.buf.flip();
+            this.buf = ByteBuffer.wrap(b);
         }
 
+        @Override
         public void close() throws IOException {
         }
 
+        @Override
         public void failed(final Exception ex) {
         }
 
+        @Override
         public HttpResponse generateResponse() {
             final HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
             final BasicHttpEntity entity  = new BasicHttpEntity();
@@ -124,9 +129,11 @@ class NRandomDataHandler implements HttpAsyncRequestHandler<HttpRequest>  {
             return response;
         }
 
+        @Override
         public void responseCompleted(final HttpContext context) {
         }
 
+        @Override
         public void produceContent(
                 final ContentEncoder encoder, final IOControl ioctrl) throws IOException {
             while (this.buf.hasRemaining()) {
