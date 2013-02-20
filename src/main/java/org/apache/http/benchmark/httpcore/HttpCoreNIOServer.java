@@ -84,6 +84,8 @@ public class HttpCoreNIOServer implements HttpServer {
             .build();
         final ListeningIOReactor ioreactor = new DefaultListeningIOReactor(reactorConfig);
         final ConnectionConfig connectionConfig = ConnectionConfig.custom()
+            .setBufferSize(BenchConsts.BUF_SIZE)
+            .setFragmentSizeHint(BenchConsts.BUF_SIZE)
             .build();
         final IOEventDispatch ioEventDispatch = new DefaultHttpServerIODispatch(handler,
             connectionConfig);
@@ -91,21 +93,25 @@ public class HttpCoreNIOServer implements HttpServer {
         this.listener = new NHttpListener(ioreactor, ioEventDispatch);
     }
 
+    @Override
     public String getName() {
         return "HttpCore (NIO)";
     }
 
+    @Override
     public String getVersion() {
         final VersionInfo vinfo = VersionInfo.loadVersionInfo("org.apache.http",
                 Thread.currentThread().getContextClassLoader());
         return vinfo.getRelease();
     }
 
+    @Override
     public void start() throws Exception {
         this.listener.start();
         this.listener.listen(new InetSocketAddress(this.port));
     }
 
+    @Override
     public void shutdown() {
         this.listener.terminate();
         try {

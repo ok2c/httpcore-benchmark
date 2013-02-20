@@ -58,7 +58,7 @@ public class Benchmark {
             CommandLineUtils.parseCommandLine(cmd, config);
         } else {
             config.setKeepAlive(true);
-            config.setRequests(20000);
+            config.setRequests(50000);
             config.setThreads(25);
         }
 
@@ -84,8 +84,17 @@ public class Benchmark {
             System.out.println(server.getName() + "; version: " + server.getVersion());
             System.out.println("---------------------------------------------------------------");
 
-            final HttpBenchmark ab = new HttpBenchmark(config);
-            ab.execute();
+            final Config warmupConfig = config.copy();
+            int n = warmupConfig.getRequests() / 100;
+            if (n > 100) {
+                n = 100;
+            }
+            warmupConfig.setRequests(n);
+            final HttpBenchmark warmUp = new HttpBenchmark(warmupConfig);
+            warmUp.doExecute();
+
+            final HttpBenchmark benchmark = new HttpBenchmark(config);
+            benchmark.execute();
             System.out.println("---------------------------------------------------------------");
         } finally {
             server.shutdown();

@@ -68,8 +68,6 @@ class HttpListener extends Thread {
             try {
                 // Set up HTTP connection
                 final Socket socket = this.serversocket.accept();
-                socket.setReceiveBufferSize(BenchConsts.BUF_SIZE);
-                socket.setSendBufferSize(BenchConsts.BUF_SIZE);
                 socket.setTcpNoDelay(BenchConsts.TCP_NO_DELAY);
 
                 final DefaultBHttpServerConnection conn = new DefaultBHttpServerConnection(

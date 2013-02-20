@@ -33,7 +33,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.benchmark.BenchConsts;
 import org.apache.http.benchmark.HttpServer;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
@@ -77,27 +76,30 @@ public class HttpCoreServer implements HttpServer {
         this.workers = new ConcurrentLinkedQueue<HttpWorker>();
         final ServerSocket serverSocket = new ServerSocket(port);
         serverSocket.setReuseAddress(true);
-        serverSocket.setReceiveBufferSize(BenchConsts.BUF_SIZE);
         this.listener = new HttpListener(
                 serverSocket,
                 httpservice,
                 new StdHttpWorkerCallback(this.workers));
     }
 
+    @Override
     public String getName() {
         return "HttpCore (blocking I/O)";
     }
 
+    @Override
     public String getVersion() {
         final VersionInfo vinfo = VersionInfo.loadVersionInfo("org.apache.http",
                 Thread.currentThread().getContextClassLoader());
         return vinfo.getRelease();
     }
 
+    @Override
     public void start() {
         this.listener.start();
     }
 
+    @Override
     public void shutdown() {
         this.listener.terminate();
         try {
