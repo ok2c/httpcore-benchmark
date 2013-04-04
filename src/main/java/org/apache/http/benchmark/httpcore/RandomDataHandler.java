@@ -51,6 +51,7 @@ class RandomDataHandler implements HttpRequestHandler  {
         super();
     }
 
+    @Override
     public void handle(
             final HttpRequest request,
             final HttpResponse response,
@@ -94,37 +95,37 @@ class RandomDataHandler implements HttpRequestHandler  {
         public RandomEntity(final int count) {
             super();
             this.count = count;
-            this.buf = new byte[1024];
+            this.buf = new byte[count];
+            final int r = Math.abs(this.buf.hashCode());
+            for (int i = 0; i < count; i++) {
+                this.buf[i] = (byte) ((r + i) % 96 + 32);
+            }
             setContentType("text/plain");
         }
 
+        @Override
         public InputStream getContent() throws IOException, IllegalStateException {
             throw new IllegalStateException("Method not supported");
         }
 
+        @Override
         public long getContentLength() {
             return this.count;
         }
 
+        @Override
         public boolean isRepeatable() {
             return true;
         }
 
+        @Override
         public boolean isStreaming() {
             return false;
         }
 
+        @Override
         public void writeTo(final OutputStream outstream) throws IOException {
-            final int r = Math.abs(this.buf.hashCode());
-            int remaining = this.count;
-            while (remaining > 0) {
-                final int chunk = Math.min(this.buf.length, remaining);
-                for (int i = 0; i < chunk; i++) {
-                    this.buf[i] = (byte) ((r + i) % 96 + 32);
-                }
-                outstream.write(this.buf, 0, chunk);
-                remaining -= chunk;
-            }
+            outstream.write(this.buf);
         }
 
     }

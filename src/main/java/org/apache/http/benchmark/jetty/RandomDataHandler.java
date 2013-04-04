@@ -44,6 +44,7 @@ class RandomDataHandler extends AbstractHandler {
         super();
     }
 
+    @Override
     public void handle(
             final String target,
             final Request baseRequest,
@@ -79,18 +80,14 @@ class RandomDataHandler extends AbstractHandler {
         response.setContentType("text/plain");
         response.setContentLength(count);
 
-        final OutputStream outstream = response.getOutputStream();
-        final byte[] tmp = new byte[1024];
-        final int r = Math.abs(tmp.hashCode());
-        int remaining = count;
-        while (remaining > 0) {
-            final int chunk = Math.min(tmp.length, remaining);
-            for (int i = 0; i < chunk; i++) {
-                tmp[i] = (byte) ((r + i) % 96 + 32);
-            }
-            outstream.write(tmp, 0, chunk);
-            remaining -= chunk;
+        final byte[] b = new byte[count];
+        final int r = Math.abs(b.hashCode());
+        for (int i = 0; i < count; i++) {
+            b[i] = (byte) ((r + i) % 96 + 32);
         }
+        
+        final OutputStream outstream = response.getOutputStream();
+        outstream.write(b);
         outstream.flush();
     }
 

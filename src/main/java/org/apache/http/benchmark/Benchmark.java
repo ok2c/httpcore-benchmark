@@ -58,8 +58,8 @@ public class Benchmark {
             CommandLineUtils.parseCommandLine(cmd, config);
         } else {
             config.setKeepAlive(true);
-            config.setRequests(50000);
-            config.setThreads(25);
+            config.setRequests(100000);
+            config.setThreads(50);
         }
 
         final URL target = new URL("http", "localhost", PORT, "/rnd?c=2048");
@@ -69,8 +69,8 @@ public class Benchmark {
         benchmark.run(new JettyServer(PORT), config);
         benchmark.run(new HttpCoreServer(PORT), config);
         benchmark.run(new JettyNIOServer(PORT), config);
-        benchmark.run(new NettyNIOServer(PORT), config);
         benchmark.run(new HttpCoreNIOServer(PORT), config);
+        benchmark.run(new NettyNIOServer(PORT), config);
     }
 
     public Benchmark() {
@@ -96,6 +96,7 @@ public class Benchmark {
             final HttpBenchmark benchmark = new HttpBenchmark(config);
             benchmark.execute();
             System.out.println("---------------------------------------------------------------");
+            Thread.sleep(3000);
         } finally {
             server.shutdown();
         }
