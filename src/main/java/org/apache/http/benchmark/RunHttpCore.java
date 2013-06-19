@@ -24,12 +24,15 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark.httpcore;
+package org.apache.http.benchmark;
 
-interface HttpWorkerCallback {
+import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
 
-    void started(HttpWorker worker);
+public class RunHttpCore {
 
-    void shutdown(HttpWorker worker);
+    public static void main(final String[] args) throws Exception {
+        final Config config = BenchRunner.parseConfig(args);
+        BenchRunner.run(new HttpCoreNIOServer(Benchmark.PORT), config);
+    }
 
 }

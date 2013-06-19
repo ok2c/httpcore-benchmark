@@ -33,7 +33,7 @@ import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.ListenerEndpoint;
 import org.apache.http.nio.reactor.ListeningIOReactor;
 
-public class NHttpListener extends Thread {
+class NHttpListener extends Thread {
 
     private final ListeningIOReactor ioreactor;
     private final IOEventDispatch ioEventDispatch;

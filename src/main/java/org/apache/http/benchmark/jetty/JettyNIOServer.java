@@ -35,6 +35,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 public class JettyNIOServer implements HttpServer {
 
+    private int port;
     private final Server server;
 
     public JettyNIOServer(final int port) {
@@ -42,6 +43,7 @@ public class JettyNIOServer implements HttpServer {
         if (port <= 0) {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
+        this.port = port;
 
         final SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(port);
@@ -65,6 +67,11 @@ public class JettyNIOServer implements HttpServer {
 
     public String getVersion() {
         return Server.getVersion();
+    }
+
+    @Override
+    public int getPort() {
+        return this.port;
     }
 
     public void start() throws Exception {

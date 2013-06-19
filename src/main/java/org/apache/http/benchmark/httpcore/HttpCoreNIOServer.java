@@ -106,6 +106,11 @@ public class HttpCoreNIOServer implements HttpServer {
     }
 
     @Override
+    public int getPort() {
+        return this.port;
+    }
+
+    @Override
     public void start() throws Exception {
         this.listener.start();
         this.listener.listen(new InetSocketAddress(this.port));

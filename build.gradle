@@ -1,0 +1,32 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+version = '0.1-SNAPSHOT'
+
+sourceCompatibility = '1.6'
+
+dependencies {
+    compile group: 'org.apache.httpcomponents', name: 'httpcore-nio', version: '4.3-beta2'
+    compile group: 'org.apache.httpcomponents', name: 'httpcore-ab', version: '4.3-beta2'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '8.1.7.v20120910'
+    compile group: 'io.netty', name: 'netty', version: '3.6.2.Final'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.5.10'
+    compile group: 'org.slf4j', name: 'slf4j-nop', version: '1.5.10'
+}
+
+task benchmark(dependsOn: 'classes') << {
+    def servers = ['Jetty', 'HttpCore', 'Netty']
+    servers.each { server ->
+        javaexec {
+            main = "org.apache.http.benchmark.Run${server}"
+            classpath = sourceSets.main.runtimeClasspath
+        }
+        sleep(2000)
+    }
+}
+
+defaultTasks 'clean', 'benchmark'

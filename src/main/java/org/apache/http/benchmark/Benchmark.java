@@ -26,80 +26,19 @@
  */
 package org.apache.http.benchmark;
 
-import java.net.URL;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
 import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
-import org.apache.http.benchmark.httpcore.HttpCoreServer;
 import org.apache.http.benchmark.jetty.JettyNIOServer;
-import org.apache.http.benchmark.jetty.JettyServer;
 import org.apache.http.benchmark.netty.NettyNIOServer;
 
 public class Benchmark {
 
-    private static final int PORT = 8989;
+    static final int PORT = 8989;
 
     public static void main(final String[] args) throws Exception {
-
-        final Config config = new Config();
-        if (args.length > 0) {
-            final Options options = CommandLineUtils.getOptions();
-            final CommandLineParser parser = new PosixParser();
-            final CommandLine cmd = parser.parse(options, args);
-            if (cmd.hasOption('h')) {
-                final HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("Benchmark [options]", options);
-                System.exit(1);
-            }
-            CommandLineUtils.parseCommandLine(cmd, config);
-        } else {
-            config.setKeepAlive(true);
-            config.setRequests(100000);
-            config.setThreads(50);
-        }
-
-        final URL target = new URL("http", "localhost", PORT, "/rnd?c=2048");
-        config.setUrl(target);
-
-        final Benchmark benchmark = new Benchmark();
-        benchmark.run(new JettyServer(PORT), config);
-        benchmark.run(new HttpCoreServer(PORT), config);
-        benchmark.run(new JettyNIOServer(PORT), config);
-        benchmark.run(new HttpCoreNIOServer(PORT), config);
-        benchmark.run(new NettyNIOServer(PORT), config);
-    }
-
-    public Benchmark() {
-        super();
-    }
-
-    public void run(final HttpServer server, final Config config) throws Exception {
-        server.start();
-        try {
-            System.out.println("---------------------------------------------------------------");
-            System.out.println(server.getName() + "; version: " + server.getVersion());
-            System.out.println("---------------------------------------------------------------");
-
-            final Config warmupConfig = config.copy();
-            int n = warmupConfig.getRequests() / 100;
-            if (n > 100) {
-                n = 100;
-            }
-            warmupConfig.setRequests(n);
-            final HttpBenchmark warmUp = new HttpBenchmark(warmupConfig);
-            warmUp.doExecute();
-
-            final HttpBenchmark benchmark = new HttpBenchmark(config);
-            benchmark.execute();
-            System.out.println("---------------------------------------------------------------");
-            Thread.sleep(3000);
-        } finally {
-            server.shutdown();
-        }
+        final Config config = BenchRunner.parseConfig(args);
+        BenchRunner.run(new JettyNIOServer(PORT), config);
+        BenchRunner.run(new HttpCoreNIOServer(PORT), config);
+        BenchRunner.run(new NettyNIOServer(PORT), config);
     }
 
 }

@@ -65,6 +65,11 @@ public class NettyNIOServer implements HttpServer {
     }
 
     @Override
+    public int getPort() {
+        return this.port;
+    }
+
+    @Override
     public void start() throws Exception {
         serverBootstrap.bind(new InetSocketAddress(port));
     }

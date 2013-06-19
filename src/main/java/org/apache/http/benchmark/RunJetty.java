@@ -24,19 +24,15 @@
  * <http://www.apache.org/>.
  *
  */
-
 package org.apache.http.benchmark;
 
-public interface HttpServer {
+import org.apache.http.benchmark.jetty.JettyNIOServer;
 
-    String getName();
+public class RunJetty {
 
-    String getVersion();
-
-    int getPort();
-
-    void start() throws Exception;
-
-    void shutdown();
+    public static void main(final String[] args) throws Exception {
+        final Config config = BenchRunner.parseConfig(args);
+        BenchRunner.run(new JettyNIOServer(Benchmark.PORT), config);
+    }
 
 }
