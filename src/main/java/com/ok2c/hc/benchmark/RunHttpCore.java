@@ -24,17 +24,17 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark;
+package com.ok2c.hc.benchmark;
 
-import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
-import org.apache.http.benchmark.jetty.JettyNIOServer;
-import org.apache.http.benchmark.netty.NettyNIOServer;
+import org.apache.http.benchmark.Config;
 
-public class RunNetty {
+import com.ok2c.hc.benchmark.httpcore.HttpCoreNIOServer;
+
+public class RunHttpCore {
 
     public static void main(final String[] args) throws Exception {
         final Config config = BenchRunner.parseConfig(args);
-        BenchRunner.run(new NettyNIOServer(Benchmark.PORT), config);
+        BenchRunner.run(new HttpCoreNIOServer(Benchmark.PORT), config);
     }
 
 }

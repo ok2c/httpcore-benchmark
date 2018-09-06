@@ -24,7 +24,7 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark.jetty;
+package com.ok2c.hc.benchmark.jetty;
 
 import java.io.IOException;
 import java.io.OutputStream;

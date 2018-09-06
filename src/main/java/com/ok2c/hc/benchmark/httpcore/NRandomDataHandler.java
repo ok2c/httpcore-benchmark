@@ -24,7 +24,7 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark.httpcore;
+package com.ok2c.hc.benchmark.httpcore;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

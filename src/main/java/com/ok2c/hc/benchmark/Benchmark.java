@@ -24,15 +24,23 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark;
+package com.ok2c.hc.benchmark;
 
-import org.apache.http.benchmark.jetty.JettyNIOServer;
+import org.apache.http.benchmark.Config;
 
-public class RunJetty {
+import com.ok2c.hc.benchmark.httpcore.HttpCoreNIOServer;
+import com.ok2c.hc.benchmark.jetty.JettyNIOServer;
+import com.ok2c.hc.benchmark.netty.NettyNIOServer;
+
+public class Benchmark {
+
+    static final int PORT = 8989;
 
     public static void main(final String[] args) throws Exception {
         final Config config = BenchRunner.parseConfig(args);
-        BenchRunner.run(new JettyNIOServer(Benchmark.PORT), config);
+        BenchRunner.run(new JettyNIOServer(PORT), config);
+        BenchRunner.run(new HttpCoreNIOServer(PORT), config);
+        BenchRunner.run(new NettyNIOServer(PORT), config);
     }
 
 }

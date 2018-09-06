@@ -24,14 +24,12 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark.httpcore;
+package com.ok2c.hc.benchmark.httpcore;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.benchmark.BenchConsts;
-import org.apache.http.benchmark.HttpServer;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
@@ -49,6 +47,9 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.http.util.VersionInfo;
+
+import com.ok2c.hc.benchmark.BenchConsts;
+import com.ok2c.hc.benchmark.HttpServer;
 
 public class HttpCoreNIOServer implements HttpServer {
 

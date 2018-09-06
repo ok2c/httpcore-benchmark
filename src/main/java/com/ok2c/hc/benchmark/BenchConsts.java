@@ -25,18 +25,11 @@
  *
  */
 
-package org.apache.http.benchmark;
+package com.ok2c.hc.benchmark;
 
-public interface HttpServer {
+public final class BenchConsts {
 
-    String getName();
-
-    String getVersion();
-
-    int getPort();
-
-    void start() throws Exception;
-
-    void shutdown();
+    public static final int BUF_SIZE             = 8 * 1024;
+    public static final boolean TCP_NO_DELAY     = true;
 
 }

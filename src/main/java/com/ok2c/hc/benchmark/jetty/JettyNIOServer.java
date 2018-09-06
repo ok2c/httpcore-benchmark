@@ -25,43 +25,49 @@
  *
  */
 
-package org.apache.http.benchmark.netty;
+package com.ok2c.hc.benchmark.jetty;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import org.apache.http.benchmark.BenchConsts;
-import org.apache.http.benchmark.HttpServer;
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import com.ok2c.hc.benchmark.BenchConsts;
+import com.ok2c.hc.benchmark.HttpServer;
 
-public class NettyNIOServer implements HttpServer {
+public class JettyNIOServer implements HttpServer {
 
-    private final int port;
-    private final ServerBootstrap serverBootstrap;
+    private int port;
+    private final Server server;
 
-    public NettyNIOServer(final int port) {
+    public JettyNIOServer(final int port) {
         super();
         if (port <= 0) {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
         this.port = port;
-        this.serverBootstrap = new ServerBootstrap(
-            new NioServerSocketChannelFactory(
-            Executors.newCachedThreadPool(),
-            Executors.newCachedThreadPool()));
-        this.serverBootstrap.setPipelineFactory(new HttpServerPipelineFactory());
-        this.serverBootstrap.setOption("child.tcpNoDelay", Boolean.valueOf(BenchConsts.TCP_NO_DELAY));
+
+        final SelectChannelConnector connector = new SelectChannelConnector();
+        connector.setPort(port);
+        connector.setRequestBufferSize(BenchConsts.BUF_SIZE);
+        connector.setResponseBufferSize(BenchConsts.BUF_SIZE);
+        connector.setReuseAddress(true);
+
+        final QueuedThreadPool threadpool = new QueuedThreadPool();
+        threadpool.setMinThreads(25);
+        threadpool.setMaxThreads(200);
+
+        this.server = new Server();
+        this.server.addConnector(connector);
+        this.server.setThreadPool(threadpool);
+        this.server.setHandler(new RandomDataHandler());
     }
 
-    @Override
     public String getName() {
-        return "Netty";
+        return "Jetty (NIO)";
     }
 
-    @Override
     public String getVersion() {
-        return "3.6.2";
+        return Server.getVersion();
     }
 
     @Override
@@ -69,14 +75,19 @@ public class NettyNIOServer implements HttpServer {
         return this.port;
     }
 
-    @Override
     public void start() throws Exception {
-        serverBootstrap.bind(new InetSocketAddress(port));
+        this.server.start();
     }
 
-    @Override
     public void shutdown() {
-        serverBootstrap.releaseExternalResources();
+        try {
+            this.server.stop();
+        } catch (final Exception ex) {
+        }
+        try {
+            this.server.join();
+        } catch (final InterruptedException ex) {
+        }
     }
 
     public static void main(final String[] args) throws Exception {
@@ -85,7 +96,7 @@ public class NettyNIOServer implements HttpServer {
             System.exit(1);
         }
         final int port = Integer.parseInt(args[0]);
-        final NettyNIOServer server = new NettyNIOServer(port);
+        final JettyNIOServer server = new JettyNIOServer(port);
         System.out.println("Listening on port: " + port);
         server.start();
 

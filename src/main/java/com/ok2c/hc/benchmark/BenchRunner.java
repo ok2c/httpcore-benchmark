@@ -24,7 +24,9 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark;
+package com.ok2c.hc.benchmark;
+
+import java.net.URL;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -32,8 +34,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-
-import java.net.URL;
+import org.apache.http.benchmark.CommandLineUtils;
+import org.apache.http.benchmark.Config;
+import org.apache.http.benchmark.HttpBenchmark;
 
 public final class BenchRunner {
 

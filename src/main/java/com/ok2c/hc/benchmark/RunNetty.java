@@ -24,12 +24,17 @@
  * <http://www.apache.org/>.
  *
  */
+package com.ok2c.hc.benchmark;
 
-package org.apache.http.benchmark;
+import org.apache.http.benchmark.Config;
 
-public final class BenchConsts {
+import com.ok2c.hc.benchmark.netty.NettyNIOServer;
 
-    public static final int BUF_SIZE             = 8 * 1024;
-    public static final boolean TCP_NO_DELAY     = true;
+public class RunNetty {
+
+    public static void main(final String[] args) throws Exception {
+        final Config config = BenchRunner.parseConfig(args);
+        BenchRunner.run(new NettyNIOServer(Benchmark.PORT), config);
+    }
 
 }

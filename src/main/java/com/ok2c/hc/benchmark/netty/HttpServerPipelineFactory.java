@@ -24,21 +24,24 @@
  * <http://www.apache.org/>.
  *
  */
-package org.apache.http.benchmark;
 
-import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
-import org.apache.http.benchmark.jetty.JettyNIOServer;
-import org.apache.http.benchmark.netty.NettyNIOServer;
+package com.ok2c.hc.benchmark.netty;
 
-public class Benchmark {
+import org.jboss.netty.channel.ChannelPipeline;
+import org.jboss.netty.channel.ChannelPipelineFactory;
+import org.jboss.netty.channel.Channels;
+import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
+import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 
-    static final int PORT = 8989;
+class HttpServerPipelineFactory implements ChannelPipelineFactory {
 
-    public static void main(final String[] args) throws Exception {
-        final Config config = BenchRunner.parseConfig(args);
-        BenchRunner.run(new JettyNIOServer(PORT), config);
-        BenchRunner.run(new HttpCoreNIOServer(PORT), config);
-        BenchRunner.run(new NettyNIOServer(PORT), config);
+    public ChannelPipeline getPipeline() throws Exception {
+        final ChannelPipeline pipeline = Channels.pipeline();
+        pipeline.addLast("decoder", new HttpRequestDecoder());
+        pipeline.addLast("encoder", new HttpResponseEncoder());
+        pipeline.addLast("handler", new RandomDataHandler());
+        return pipeline;
     }
+
 
 }

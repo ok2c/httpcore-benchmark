@@ -22,7 +22,7 @@ task benchmark(dependsOn: 'classes') << {
     def servers = ['Jetty', 'HttpCore', 'Netty']
     servers.each { server ->
         javaexec {
-            main = "org.apache.http.benchmark.Run${server}"
+            main = "com.ok2c.hc.benchmark.Run${server}"
             classpath = sourceSets.main.runtimeClasspath
         }
         sleep(2000)
