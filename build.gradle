@@ -9,8 +9,9 @@ version = '0.1-SNAPSHOT'
 sourceCompatibility = '1.6'
 
 dependencies {
-    compile group: 'org.apache.httpcomponents', name: 'httpcore-nio', version: '4.3-beta2'
-    compile group: 'org.apache.httpcomponents', name: 'httpcore-ab', version: '4.3-beta2'
+    compile group: 'org.apache.httpcomponents.core5', name: 'httpcore5', version: '5.0-beta3'
+    compile group: 'org.apache.httpcomponents.core5', name: 'httpcore5-testing', version: '5.0-beta3'
+    compile group: 'org.apache.httpcomponents', name: 'httpcore-nio', version: '4.4.10'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
     compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '8.1.7.v20120910'
     compile group: 'io.netty', name: 'netty', version: '3.6.2.Final'
@@ -19,7 +20,7 @@ dependencies {
 }
 
 task benchmark(dependsOn: 'classes') << {
-    def servers = ['Jetty', 'HttpCore', 'Netty']
+    def servers = ['Jetty', 'HttpCore4', 'HttpCore5', 'Netty']
     servers.each { server ->
         javaexec {
             main = "com.ok2c.hc.benchmark.Run${server}"

@@ -26,21 +26,14 @@
  */
 package com.ok2c.hc.benchmark;
 
-import org.apache.http.benchmark.Config;
+import org.apache.hc.core5.benchmark.Config;
+import com.ok2c.hc.benchmark.httpcore.HttpCore4Server;
 
-import com.ok2c.hc.benchmark.httpcore.HttpCoreNIOServer;
-import com.ok2c.hc.benchmark.jetty.JettyNIOServer;
-import com.ok2c.hc.benchmark.netty.NettyNIOServer;
-
-public class Benchmark {
-
-    static final int PORT = 8989;
+public class RunHttpCore4 {
 
     public static void main(final String[] args) throws Exception {
         final Config config = BenchRunner.parseConfig(args);
-        BenchRunner.run(new JettyNIOServer(PORT), config);
-        BenchRunner.run(new HttpCoreNIOServer(PORT), config);
-        BenchRunner.run(new NettyNIOServer(PORT), config);
+        BenchRunner.run(new HttpCore4Server(BenchConsts.PORT), config);
     }
 
 }

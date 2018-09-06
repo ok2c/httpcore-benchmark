@@ -34,9 +34,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.http.benchmark.CommandLineUtils;
-import org.apache.http.benchmark.Config;
-import org.apache.http.benchmark.HttpBenchmark;
+import org.apache.hc.core5.benchmark.CommandLineUtils;
+import org.apache.hc.core5.benchmark.Config;
+import org.apache.hc.core5.benchmark.HttpBenchmark;
 
 public final class BenchRunner {
 

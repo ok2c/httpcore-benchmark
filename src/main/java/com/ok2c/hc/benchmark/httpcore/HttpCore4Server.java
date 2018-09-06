@@ -51,23 +51,21 @@ import org.apache.http.util.VersionInfo;
 import com.ok2c.hc.benchmark.BenchConsts;
 import com.ok2c.hc.benchmark.HttpServer;
 
-public class HttpCoreNIOServer implements HttpServer {
+public class HttpCore4Server implements HttpServer {
 
     private final int port;
     private final NHttpListener listener;
 
-    public HttpCoreNIOServer(final int port) throws IOException {
+    public HttpCore4Server(final int port) throws IOException {
         if (port <= 0) {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
         this.port = port;
 
-        final HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
-                new ResponseDate(),
+        final HttpProcessor httpproc = new ImmutableHttpProcessor(new ResponseDate(),
                 new ResponseServer("HttpCore-NIO-Test/1.1"),
                 new ResponseContent(),
-                new ResponseConnControl()
-        });
+                new ResponseConnControl());
 
         final UriHttpAsyncRequestHandlerMapper registry = new UriHttpAsyncRequestHandlerMapper();
         registry.register("/rnd", new NRandomDataHandler());
@@ -136,7 +134,7 @@ public class HttpCoreNIOServer implements HttpServer {
             System.exit(1);
         }
         final int port = Integer.parseInt(args[0]);
-        final HttpCoreNIOServer server = new HttpCoreNIOServer(port);
+        final HttpCore4Server server = new HttpCore4Server(port);
         System.out.println("Listening on port: " + port);
         server.start();
 

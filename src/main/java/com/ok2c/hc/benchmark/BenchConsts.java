@@ -31,5 +31,6 @@ public final class BenchConsts {
 
     public static final int BUF_SIZE             = 8 * 1024;
     public static final boolean TCP_NO_DELAY     = true;
+    public static final int PORT                 = 8989;
 
 }
