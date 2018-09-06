@@ -50,12 +50,12 @@ import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.http.util.VersionInfo;
 
-public class HttpCoreNIOServer implements HttpServer {
+public class HttpCore4Server implements HttpServer {
 
     private final int port;
     private final NHttpListener listener;
 
-    public HttpCoreNIOServer(final int port) throws IOException {
+    public HttpCore4Server(final int port) throws IOException {
         if (port <= 0) {
             throw new IllegalArgumentException("Server port may not be negative or null");
         }
@@ -135,7 +135,7 @@ public class HttpCoreNIOServer implements HttpServer {
             System.exit(1);
         }
         final int port = Integer.parseInt(args[0]);
-        final HttpCoreNIOServer server = new HttpCoreNIOServer(port);
+        final HttpCore4Server server = new HttpCore4Server(port);
         System.out.println("Listening on port: " + port);
         server.start();
 

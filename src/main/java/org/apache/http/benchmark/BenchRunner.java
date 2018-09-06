@@ -32,6 +32,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.hc.core5.benchmark.CommandLineUtils;
+import org.apache.hc.core5.benchmark.Config;
+import org.apache.hc.core5.benchmark.HttpBenchmark;
 
 import java.net.URL;
 

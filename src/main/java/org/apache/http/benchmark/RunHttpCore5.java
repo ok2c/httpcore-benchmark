@@ -26,19 +26,14 @@
  */
 package org.apache.http.benchmark;
 
-import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
-import org.apache.http.benchmark.jetty.JettyNIOServer;
-import org.apache.http.benchmark.netty.NettyNIOServer;
+import org.apache.hc.core5.benchmark.Config;
+import org.apache.http.benchmark.httpcore5.HttpCore5Server;
 
-public class Benchmark {
-
-    static final int PORT = 8989;
+public class RunHttpCore5 {
 
     public static void main(final String[] args) throws Exception {
         final Config config = BenchRunner.parseConfig(args);
-        BenchRunner.run(new JettyNIOServer(PORT), config);
-        BenchRunner.run(new HttpCoreNIOServer(PORT), config);
-        BenchRunner.run(new NettyNIOServer(PORT), config);
+        BenchRunner.run(new HttpCore5Server(BenchConsts.PORT), config);
     }
 
 }

@@ -26,13 +26,14 @@
  */
 package org.apache.http.benchmark;
 
-import org.apache.http.benchmark.httpcore.HttpCoreNIOServer;
+import org.apache.hc.core5.benchmark.Config;
+import org.apache.http.benchmark.httpcore.HttpCore4Server;
 
-public class RunHttpCore {
+public class RunHttpCore4 {
 
     public static void main(final String[] args) throws Exception {
         final Config config = BenchRunner.parseConfig(args);
-        BenchRunner.run(new HttpCoreNIOServer(Benchmark.PORT), config);
+        BenchRunner.run(new HttpCore4Server(BenchConsts.PORT), config);
     }
 
 }
